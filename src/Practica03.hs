@@ -32,12 +32,31 @@ FORMAS NORMALES
 
 --Ejercicio 1
 fnn :: Prop -> Prop
-fnn = undefined
+fnn (Cons b) = Cons b
+fnn (Var p) = Var p
+fnn(Not p) = Not (fnn p)
+fnn (And p q) = And (fnn p) (fnn q)
+fnn (Or p q) = Or (fnn p) (fnn q)
+fnn (Not(Not p)) = fnn p
+fnn (Not(And p q)) = Or (fnn(Not p)) (fnn(Not q))
+fnn (Not(Or p q)) = And (fnn(Not p)) (fnn(Not q))
+fnn (Not(Impl p q)) = fnn (Or (Not p) q)
+fnn (Not (Syss p q)) = fnn (And (Impl p q) (Impl q p))
 
 
 --Ejercicio 2
 fnc :: Prop -> Prop
-fnc = undefined
+fnc p = p
+fnc (Not p) = Not (fnc p)
+fnc (And p q) = And (fnc p) (fnc q)
+fnc (Or p q) = Or (fnc p) (fnc q)
+fnc (Or p (And q r)) = And (fnc (Or p q)) (fnc (Or p r))
+fnc (Or (And p q) r) = And (fnc (Or p r)) (fnc (Or q r))
+--equivalencia de la implicacion
+fnc (Impl p q) = fnc (Or (Not p) q)
+--equivalencia del bicondicional
+fnc (Syss p q) = fnc (And (Impl p q) (Impl q p))
+
 
 {-
 RESOLUCION BINARIA
@@ -49,11 +68,18 @@ type Clausula = [Literal]
 
 --Ejercicio 1
 clausulas :: Prop -> [Clausula]
-clausulas = undefined
+clausulas p =[[p]]
+clausulas (And p q) = clausulas p ++ clausulas q
+clausulas (Or p q) = [literales (Or p q)]
+literales :: Prop -> [Literal]
+literales (Or p q) = literales p ++ literales q
+literales p = [p]
+
 
 --Ejercicio 2
 resolucion :: Clausula -> Clausula -> Clausula
-resolucion = undefined
+--toma cada clausula en cl1 y en cl2 y si su complemento no esta en la otra clausula la agreaga a la lista de resultados
+resolucion cl1 cl2 = [l | l <- c1, not (Not l `elem` c2)] ++ [l | l <- c2, not (Not l `elem` c1)]
 
 {-
 ALGORITMO DE SATURACION
@@ -63,7 +89,7 @@ ALGORITMO DE SATURACION
 hayResolvente :: Clausula -> Clausula -> Bool
 hayResolvente = undefined
 
---Ejercicio 2
+--Ejercicio 2   
 --Funcion principal que pasa la formula proposicional a fnc e invoca a res con las clausulas de la formula.
 saturacion :: Prop -> Bool
 saturacion = undefined
