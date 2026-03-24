@@ -78,8 +78,8 @@ literales p = [p]
 
 --Ejercicio 2
 resolucion :: Clausula -> Clausula -> Clausula
---toma cada clausula en cl1 y en cl2 y si su complemento no esta en la otra clausula la agreaga a la lista de resultados
-resolucion cl1 cl2 = [l | l <- c1, not (Not l `elem` c2)] ++ [l | l <- c2, not (Not l `elem` c1)]
+--toma cada clausula en c1 y en c2 y si su complemento no esta en la otra clausula la agreaga a la lista de resultados
+resolucion c1 c2 = [l | l <- c1, not (Not l `elem` c2)] ++ [l | l <- c2, not (Not l `elem` c1)]
 
 {-
 ALGORITMO DE SATURACION
@@ -95,12 +95,7 @@ hayResolvente (l:ls) cl2 =
     -- Verificamos si su complemento (¬l) está en la segunda cláusula
     if Not l `elem` cl2
     then True  -- Si existe, sí hay resolvente
-    else  -- Si no, seguimos revisando el resto de la lista contra cl2
-        hayResolvente ls cl2
-        ||
-        -- También revisamos el otro sentido (cl2 contra cl1) (complemento al revés)
-        hayResolvente cl2 ls
-
+    else hayResolvente ls cl2 || hayResolvente cl2 ls -- Si no, seguimos revisando el resto de la lista contra cl2
 --Ejercicio 2   
 --Funcion principal que pasa la formula proposicional a fnc e invoca a res con las clausulas de la formula.
 saturacion :: Prop -> Bool
