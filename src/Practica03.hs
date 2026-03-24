@@ -87,7 +87,19 @@ ALGORITMO DE SATURACION
 
 --Ejercicio 1
 hayResolvente :: Clausula -> Clausula -> Bool
-hayResolvente = undefined
+-- Caso base: si la primera cláusula está vacía,ent ya no hay literales que revisar por lo que no hay resolvente
+hayResolvente [] _ = False
+
+-- Caso recursivo:Se toma un literal l de la primera cláusula
+hayResolvente (l:ls) cl2 =
+    -- Verificamos si su complemento (¬l) está en la segunda cláusula
+    if Not l `elem` cl2
+    then True  -- Si existe, sí hay resolvente
+    else  -- Si no, seguimos revisando el resto de la lista contra cl2
+        hayResolvente ls cl2
+        ||
+        -- También revisamos el otro sentido (cl2 contra cl1) (complemento al revés)
+        hayResolvente cl2 ls
 
 --Ejercicio 2   
 --Funcion principal que pasa la formula proposicional a fnc e invoca a res con las clausulas de la formula.
