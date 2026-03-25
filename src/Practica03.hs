@@ -83,7 +83,7 @@ clausulas :: Prop -> [Clausula]
 
 clausulas (And p q) = clausulas p ++ clausulas q
 
-clausulas p = [lit p]
+clausulas p = [myNub (lit p)]
 
 lit :: Prop -> [Literal]
 
@@ -95,12 +95,11 @@ lit p = [p]
 --Ejercicio 2
 resolucion :: Clausula -> Clausula -> Clausula
 --toma cada clausula en c1 y en c2 y si su complemento no esta en la otra clausula la agreaga a la lista de resultados
-resolucion :: Clausula -> Clausula -> Clausula
 resolucion c1 c2 =
     case [(l1,l2) | l1 <- c1, l2 <- c2, l1 == Not l2 || Not l1 == l2] of
-        [] -> c1 ++ c2
+        [] -> myNub(c1 ++ c2)
         ((l,_):_) ->
-            myFilter (/= l) c1 ++ myFilter (/= Not l) c2
+            myNub(myFilter (/= l) c1 ++ myFilter (/= Not l) c2)
 
 {-
 ALGORITMO DE SATURACION
@@ -123,12 +122,19 @@ hayResolvente (l:ls) cl2 =
 saturacion :: Prop -> Bool
 saturacion = undefined
 
-distri :: Prop -> Prop
-distri (Or p (And q r)) = And (distri (Or p q)) (distri (Or p r))
-distri (Or (And q r) p) = And (distri (Or q p)) (distri (Or r p))
-distri (Or p q) = Or (distri p) (distri q)
-distri (And p q) = And (distri p) (distri q)
-distri p = p
+dist :: Prop -> Prop
+dist (And p q) = And (dist p) (dist q)
+
+dist (Or p q) =
+    case (dist p, dist q) of
+        (p', And q1 q2) ->
+            And (dist (Or p' q1)) (dist (Or p' q2))
+        (And p1 p2, q') ->
+            And (dist (Or p1 q')) (dist (Or p2 q'))
+        (p', q') ->
+            Or p' q'
+
+dist p = p
 
 myFilter :: (a -> Bool) -> [a] -> [a]
 myFilter _ [] = []
@@ -136,3 +142,7 @@ myFilter p (x:xs)
 
     | p x       = x : myFilter p xs
     | otherwise = myFilter p xs
+
+myNub :: Eq a => [a] -> [a]
+myNub []     = []
+myNub (x:xs) = x : myNub (myFilter (/= x) xs)
