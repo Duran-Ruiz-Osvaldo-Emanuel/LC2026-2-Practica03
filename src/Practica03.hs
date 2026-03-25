@@ -57,19 +57,6 @@ fnn (Syss p q) = fnn (And (Impl p q) (Impl q p))
 fnc :: Prop -> Prop
 fnc p = dist (fnn p)
 
-dist :: Prop -> Prop
-
-dist (And p q) = And (dist p) (dist q)
-
-dist (Or p (And q r)) = And (dist (Or p q)) (dist (Or p r))
-
-dist (Or (And p q) r) = And (dist (Or p r)) (dist (Or q r))
-
-dist (Or p q) = Or (dist p) (dist q)
-
-dist p = p
-
-
 {-
 RESOLUCION BINARIA
 -}
@@ -122,6 +109,7 @@ hayResolvente (l:ls) cl2 =
 saturacion :: Prop -> Bool
 saturacion = undefined
 
+--version completa de distributividad, se engloban casos del ejercicio de fnc, (Or p (And q r),Or (And p q) r)
 dist :: Prop -> Prop
 dist (And p q) = And (dist p) (dist q)
 
