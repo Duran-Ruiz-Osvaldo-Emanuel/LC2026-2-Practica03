@@ -124,10 +124,10 @@ saturacion :: Prop -> Bool
 saturacion = undefined
 
 distri :: Prop -> Prop
-distri (Or p (And q r)) = And (distribuir (Or p q)) (distribuir (Or p r))
-distri (Or (And q r) p) = And (distribuir (Or q p)) (distribuir (Or r p))
-distri (Or p q) = Or (distribuir p) (distribuir q)
-distri (And p q) = And (distribuir p) (distribuir q)
+distri (Or p (And q r)) = And (distri (Or p q)) (distri (Or p r))
+distri (Or (And q r) p) = And (distri (Or q p)) (distri (Or r p))
+distri (Or p q) = Or (distri p) (distri q)
+distri (And p q) = And (distri p) (distri q)
 distri p = p
 
 myFilter :: (a -> Bool) -> [a] -> [a]
