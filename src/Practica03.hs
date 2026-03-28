@@ -107,7 +107,26 @@ hayResolvente (l:ls) cl2 =
 --Ejercicio 2   
 --Funcion principal que pasa la formula proposicional a fnc e invoca a res con las clausulas de la formula.
 saturacion :: Prop -> Bool
-saturacion = undefined
+saturacion p = sat (clausulas (fnc p))
+  where
+    sat cs
+        -- Caso 1: cláusula vacía → insatisfacible
+        | [] `elem` cs = False
+
+        -- Caso 2: no hay cambios → satisfacible
+        | nuevos == [] = True
+
+        -- Caso 3: seguir saturando
+        | otherwise = sat (myNub (cs ++ nuevos))
+      where
+        nuevos = [ myNub (resolucion c1 c2)
+                 | c1 <- cs
+                 , c2 <- cs
+                 , c1 /= c2
+                 , hayResolvente c1 c2
+                 , let r = resolucion c1 c2
+                 , r `notElem` cs
+                 ]
 
 --version completa de distributividad, se engloban casos del ejercicio de fnc, (Or p (And q r),Or (And p q) r)
 dist :: Prop -> Prop
