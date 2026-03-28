@@ -131,7 +131,6 @@ saturacion p = sat (clausulas (fnc p))
 --version completa de distributividad, se engloban casos del ejercicio de fnc, (Or p (And q r),Or (And p q) r)
 dist :: Prop -> Prop
 dist (And p q) = And (dist p) (dist q)
-dist (Or (Or p q) r) = dist (Or p (Or q r))
 
 dist (Or p q) =
     case (dist p, dist q) of
